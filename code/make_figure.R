@@ -1,4 +1,5 @@
 
+# Load required libraries -------------------------------------------------
 
 ## MAKE SURE ALL REQUIREMETS ARE MET AND LOAD LIBRARIES
 
@@ -35,7 +36,11 @@ if (!requireNamespace("FactoMineR", quietly = TRUE)) {
   # If not installed, install it
   install.packages("FactoMineR")
 }
-
+# Check if the package is already installed
+if (!requireNamespace("ggbiplot", quietly = TRUE)) {
+  # If not installed, install it
+  install.packages("ggbiplot")
+}
 
 
 # load the libraries
@@ -46,10 +51,14 @@ suppressPackageStartupMessages({
   library(corrr)
   library(ggcorrplot)
   library(FactoMineR)
+  library(devtools)
+  library(ggbiplot)
 })
 
 
-##### IMPORT DATA NAD FORMAT
+# import data -------------------------------------------------------------
+
+##### IMPORT DATA AND FORMAT
 
 ### TEST IMPORT
 # read csv files from data folder
@@ -65,13 +74,13 @@ kraken_data_git <- read.csv("https://media.githubusercontent.com/media/jessica-d
 # import kraken data from poore et al
 kraken_url <- "https://media.githubusercontent.com/media/jessica-devilla/JD_20_440_pset6/main/data/Kraken-TCGA-Voom-SNM-Plate-Center-Filtering-Data.csv"
 #kraken_data <- read_csv(url(kraken_url),col_types = cols(.default = col_character()))
-kraken_data <- read_csv(url(kraken_url))
+kraken_data <- read_csv(url(kraken_url),show_col_types = FALSE)
 kraken_df <- as.data.frame(kraken_data, stringsAsFactors = FALSE)
 
 # import kraken metadata from poore et al
 kraken_meta_url <- "https://media.githubusercontent.com/media/jessica-devilla/JD_20_440_pset6/main/data/Metadata-TCGA-Kraken-17625-Samples.csv"
 #kraken_metadata <-read_csv(url(kraken_meta_url),col_types = cols(.default = col_character()))
-kraken_metadata <-read_csv(url(kraken_meta_url))
+kraken_metadata <-read_csv(url(kraken_meta_url),show_col_types = FALSE)
 kraken_metadata_df <- as.data.frame(kraken_metadata, stringsAsFactors = FALSE)
 
 # Subset the dataframe to get only values from COAD patients
@@ -112,5 +121,29 @@ stage_hist2 <- ggplot(kraken_meta_filt, aes(x = stage_category)) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 print(stage_hist2)
 
-pc <- prcomp(kraken_COAD, center=TRUE, scale=TRUE)
-attributes(pc)
+
+# pc ----------------------------------------------------------------------
+
+#NOT WORKING YET
+
+kraken_norm = scale(kraken_COAD[,-1])
+corr_matrix <- cor(kraken_norm)
+
+data.pca <- princomp(corr_matrix)
+summary(data.pca)
+data.pca$loadings[1:10, 1:2]
+fviz_eig(data.pca, addlabels = TRUE)
+
+
+#pc <- prcomp(kraken_norm, center=TRUE, scale=TRUE)
+#attributes(pc)
+#summary(pc)
+
+#g <- ggbiplot(pc,
+#              obs.scale = 1,
+#              var.scale = 1)
+#g <- g + scale_color_discrete(name = '')
+#g <- g + theme(legend.direction = 'horizontal',
+   #            legend.position = 'top')
+#print(g)
+
