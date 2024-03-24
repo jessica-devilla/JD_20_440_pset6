@@ -1,5 +1,4 @@
 
-#FAKE R CHANGE
 
 ## MAKE SURE ALL REQUIREMETS ARE MET AND LOAD LIBRARIES
 
@@ -20,11 +19,33 @@ if (!requireNamespace("dplyr", quietly = TRUE)) {
   install.packages("dplyr")
 }
 
+# Check if the package is already installed
+if (!requireNamespace("corrr", quietly = TRUE)) {
+  # If not installed, install it
+  install.packages("corrr")
+}
+
+# Check if the package is already installed
+if (!requireNamespace("ggcorrplot", quietly = TRUE)) {
+  # If not installed, install it
+  install.packages("ggcorrplot")
+}
+# Check if the package is already installed
+if (!requireNamespace("FactoMineR", quietly = TRUE)) {
+  # If not installed, install it
+  install.packages("FactoMineR")
+}
+
+
+
 # load the libraries
 suppressPackageStartupMessages({
   library(readr)
   library(ggplot2)
   library(dplyr)
+  library(corrr)
+  library(ggcorrplot)
+  library(FactoMineR)
 })
 
 
@@ -43,12 +64,14 @@ kraken_data_git <- read.csv("https://media.githubusercontent.com/media/jessica-d
 
 # import kraken data from poore et al
 kraken_url <- "https://media.githubusercontent.com/media/jessica-devilla/JD_20_440_pset6/main/data/Kraken-TCGA-Voom-SNM-Plate-Center-Filtering-Data.csv"
-kraken_data <- read_csv(url(kraken_url),col_types = cols(.default = col_character()))
+#kraken_data <- read_csv(url(kraken_url),col_types = cols(.default = col_character()))
+kraken_data <- read_csv(url(kraken_url))
 kraken_df <- as.data.frame(kraken_data, stringsAsFactors = FALSE)
 
 # import kraken metadata from poore et al
 kraken_meta_url <- "https://media.githubusercontent.com/media/jessica-devilla/JD_20_440_pset6/main/data/Metadata-TCGA-Kraken-17625-Samples.csv"
-kraken_metadata <-read_csv(url(kraken_meta_url),col_types = cols(.default = col_character()))
+#kraken_metadata <-read_csv(url(kraken_meta_url),col_types = cols(.default = col_character()))
+kraken_metadata <-read_csv(url(kraken_meta_url))
 kraken_metadata_df <- as.data.frame(kraken_metadata, stringsAsFactors = FALSE)
 
 # Subset the dataframe to get only values from COAD patients
@@ -88,3 +111,6 @@ stage_hist2 <- ggplot(kraken_meta_filt, aes(x = stage_category)) +
   ggtitle("Histogram of Pathologic Stage Labels")  +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 print(stage_hist2)
+
+pc <- prcomp(kraken_COAD, center=TRUE, scale=TRUE)
+attributes(pc)
