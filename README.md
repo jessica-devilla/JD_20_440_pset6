@@ -23,3 +23,9 @@ After cloning the repository, you may need to make the R scripts executable. Run
 ```bash
 chmod +x ./code/make_figure.R
 ```
+
+To generate figures, run the following code
+```bash
+Rscript code/make_figure.R
+```
+
