@@ -67,26 +67,13 @@ suppressPackageStartupMessages({
 
 ##### IMPORT DATA AND FORMAT
 
-### TEST IMPORT
-# read csv files from data folder
-#kraken_meta_path <- "C:\Users\jessn\Documents\MIT_G1\20_440\pset6\data\Kraken-TCGA-Voom-SNM-Plate-Center-Filtering-Data.csv"
-# set path to csv files via directory
-kraken_path <- "data/Kraken-TCGA-Voom-SNM-Plate-Center-Filtering-Data.csv"
-
-#note these import methods do not import the data as in the csv
-kraken_data <- read.csv(kraken_path)
-#import by directly calling git hub url
-kraken_data_git <- read.csv("https://media.githubusercontent.com/media/jessica-devilla/JD_20_440_pset6/main/data/Kraken-TCGA-Voom-SNM-Plate-Center-Filtering-Data.csv")
-
 # import kraken data from poore et al
 kraken_url <- "https://media.githubusercontent.com/media/jessica-devilla/JD_20_440_pset6/main/data/Kraken-TCGA-Voom-SNM-Plate-Center-Filtering-Data.csv"
-#kraken_data <- read_csv(url(kraken_url),col_types = cols(.default = col_character()))
 kraken_data <- read_csv(url(kraken_url),show_col_types = FALSE)
 kraken_df <- as.data.frame(kraken_data, stringsAsFactors = FALSE)
 
 # import kraken metadata from poore et al
 kraken_meta_url <- "https://media.githubusercontent.com/media/jessica-devilla/JD_20_440_pset6/main/data/Metadata-TCGA-Kraken-17625-Samples.csv"
-#kraken_metadata <-read_csv(url(kraken_meta_url),col_types = cols(.default = col_character()))
 kraken_metadata <-read_csv(url(kraken_meta_url),show_col_types = FALSE)
 kraken_metadata_df <- as.data.frame(kraken_metadata, stringsAsFactors = FALSE)
 
@@ -95,6 +82,7 @@ kraken_metaCOAD <- subset(kraken_metadata_df, disease_type == "Colon Adenocarcin
 #dim(kraken_metaCOAD)
 #get the patient ids from COAD metadata
 ids <- kraken_metaCOAD[,1]
+# Subset metadata file
 kraken_COAD <- kraken_df[kraken_df[,1] %in% ids,]
 #dim(kraken_COAD) # check to see if dimensions matched
 
@@ -127,22 +115,24 @@ stage_hist2 <- ggplot(kraken_meta_filt, aes(x = stage_category)) +
   ggtitle("Histogram of Pathologic Stage Labels")  +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 print(stage_hist2)
+ggsave(path = "figures", filename = "fig1a.png", bg='white')
+
 
 
 # pc ----------------------------------------------------------------------
 
-
+#merge dataframes with relevant microbial data and metadata
 colnames(kraken_meta_filt)[1] <- "id"
 colnames(kraken_COAD)[1] <- "id"
-
 kraken_merge <- merge(kraken_COAD,kraken_meta_filt[,c('id','stage_category')], by='id',all.x=TRUE)
-contaminant_columns <- grepl("contaminant", names(kraken_merge), ignore.case = TRUE)
 
 # Subset the dataframe to exclude contaminant columns
+contaminant_columns <- grepl("contaminant", names(kraken_merge), ignore.case = TRUE)
 kraken_merge <- kraken_merge[, !contaminant_columns]
 
-
+# update formatting of column names
 colnames(kraken_merge) <- sub(".*__(.*)$", "\\1", colnames(kraken_merge))
+#prepare data for pca
 kraken_pca <- kraken_merge[ , !(names(kraken_merge) %in% c("id", "stage_category"))]
 kraken_pca <- scale(kraken_pca)
 
@@ -151,13 +141,17 @@ kraken_pca <- scale(kraken_pca)
 #data.pca <- princomp(corr_matrix)
 #data.pca$loadings[1:10, 1:2]
 
-# METHOD 2
+# METHOD 2 - run PCA
 data.pca <- prcomp(kraken_pca, center = FALSE, scale = FALSE)
+
+#print pca with highest loadings/rotations
 data.pca$rotation[1:10, 1:2]
+#summary(data.pca)
 
-summary(data.pca)
-
+#make scree plot
 fviz_eig(data.pca, addlabels = TRUE)
+ggsave(path = "figures", filename = "fig1b.png", bg='white')
+
 
 ## GRAPHS OF INDIVIDUALS
 # PCA colored by cos2
@@ -168,12 +162,14 @@ fviz_pca_ind(data.pca, geom="point",col.ind="cos2")+
 # Color individuals by group
 fviz_pca_ind(data.pca, label="none", 
              col.ind = kraken_merge$stage_category)
+ggsave(path = "figures", filename = "fig1c.png", bg='white')
+
 
 
 ##GRAPHS OF VARIABLES
 #fviz_pca_var(data.pca, select.var = list(contrib = 20))
 
-
+#make a biplot
 g <- fviz_pca_biplot(data.pca,
                 label='var', 
                 repel = TRUE, 
@@ -188,3 +184,4 @@ g <- fviz_pca_biplot(data.pca,
                 )
 
 print(g)
+ggsave(path = "figures", filename = "fig1d.png", bg='white')
