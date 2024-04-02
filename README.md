@@ -17,7 +17,9 @@ This project was developed on a PC and assumes use of a Unix command line shell 
 
 ## Running the code
 
+```bash
 git clone https://github.com/jessica-devilla/JD_20_440_pset6.git
+```
 
 After cloning the repository, you may need to make the R scripts executable. Run the following command in the terminal from the root of the cloned repository:
 ```bash
