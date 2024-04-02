@@ -1,7 +1,15 @@
+ 
+#!/usr/bin/env/Rscript --vanilla
+
+
+# Clean environment -------------------------------------------------------
+rm(list = ls(all.names = TRUE)) # will clear all objects including hidden objects
+gc() # free up memory and report the memory usage
 
 # Load required libraries -------------------------------------------------
 
 ## MAKE SURE ALL REQUIREMETS ARE MET AND LOAD LIBRARIES
+# see requirements.txt file for package versions
 
 # Check if the packages is already installed
 if (!requireNamespace("readr", quietly = TRUE)) {
