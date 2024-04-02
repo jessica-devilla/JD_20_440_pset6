@@ -6,6 +6,9 @@
 rm(list = ls(all.names = TRUE)) # will clear all objects including hidden objects
 gc() # free up memory and report the memory usage
 
+# Print a starting message
+cat("Starting the script...\n")
+
 # Load required libraries -------------------------------------------------
 
 ## MAKE SURE ALL REQUIREMETS ARE MET AND LOAD LIBRARIES
