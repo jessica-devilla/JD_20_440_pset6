@@ -3,8 +3,8 @@
 
 
 # Clean environment -------------------------------------------------------
-#rm(list = ls(all.names = TRUE)) # will clear all objects including hidden objects
-#gc() # free up memory and report the memory usage
+rm(list = ls(all.names = TRUE)) # will clear all objects including hidden objects
+gc() # free up memory and report the memory usage
 
 # Print a starting message
 cat("Starting the script...\n")
@@ -78,6 +78,9 @@ suppressPackageStartupMessages({
 
 ##### IMPORT DATA AND FORMAT
 
+# Print update
+cat("Importing data...\n")
+
 # import kraken data from poore et al
 kraken_url <- "https://media.githubusercontent.com/media/jessica-devilla/JD_20_440_pset6/main/data/Kraken-TCGA-Voom-SNM-Plate-Center-Filtering-Data.csv"
 kraken_data <- read_csv(url(kraken_url),show_col_types = FALSE)
@@ -98,6 +101,9 @@ kraken_COAD <- kraken_df[kraken_df[,1] %in% ids,]
 #dim(kraken_COAD) # check to see if dimensions matched
 
 #### EXPLORATORY ANALYSIS OF THE DATASET
+
+# Print update
+cat("Making histogram...\n")
 
 # plot stage labels
 stage_hist1 <- ggplot(kraken_metaCOAD, aes(x = pathologic_stage_label)) +
@@ -131,6 +137,10 @@ ggsave(path = "figures", filename = "fig1a.png", bg='white')
 
 
 # pc ----------------------------------------------------------------------
+
+# Print update
+cat("Run PCA...\n")
+
 
 #merge dataframes with relevant microbial data and metadata
 colnames(kraken_meta_filt)[1] <- "id"
@@ -196,3 +206,7 @@ g <- fviz_pca_biplot(data.pca,
 
 print(g)
 ggsave(path = "figures", filename = "fig1d.png", bg='white')
+
+# Print update
+cat("Done...\n")
+
