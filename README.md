@@ -49,8 +49,11 @@ To generate figures, run the following scrip using Git Bash.
 Rscript code/make_figure.R
 ```
 This script will load required packages, import and prepare the data from github, and perform exploratory analysis on the dataset to produce 1 figure. PCA is performed using the native stats package in R. 
-Progress is be printed into the terminal as the script runs. The *.png files for Fig1a-d are output to the figures subfolder. 
+Progress is be printed into the terminal as the script runs. The *.png files for Fig1a-d are output to the figures subfolder as below. 
+
 Fig1A: a histogram of cases per stage classification determined by parsing the metadata
+
 Fig1B: Scree plot showing variance explained by each principal component
 Fig1C: PCA plot labeled by stage
+
 Fig 1D: Biplot showing the loading vectors of the top 5 cocntributing variables
